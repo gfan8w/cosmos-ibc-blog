@@ -1,0 +1,59 @@
+syntax = "proto3";
+package planet.blog;
+
+import "planet/blog/sent_post.proto";
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "planet/x/blog/types";
+
+// Msg defines the Msg service.
+service Msg {
+    rpc CreateSentPost(MsgCreateSentPost) returns (MsgCreateSentPostResponse);
+  rpc UpdateSentPost(MsgUpdateSentPost) returns (MsgUpdateSentPostResponse);
+  rpc DeleteSentPost(MsgDeleteSentPost) returns (MsgDeleteSentPostResponse);
+  rpc SendIbcPost(MsgSendIbcPost) returns (MsgSendIbcPostResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateSentPost {
+  string creator = 1;
+  string postID = 2;
+  string title = 3;
+  string chain = 4;
+  string creatorNoMessage = 5;
+}
+
+message MsgCreateSentPostResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateSentPost {
+  string creator = 1;
+  uint64 id = 2;
+  string postID = 3;
+  string title = 4;
+  string chain = 5;
+  string creatorNoMessage = 6;
+}
+
+message MsgUpdateSentPostResponse {}
+
+message MsgDeleteSentPost {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteSentPostResponse {}
+
+message MsgSendIbcPost {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string title = 5;
+  string content = 6;
+}
+
+message MsgSendIbcPostResponse {
+}
+// this line is used by starport scaffolding # proto/tx/message
