@@ -7,16 +7,16 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgSendIbcPost } from "./types/planet/blog/tx";
-import { MsgUpdateSentPost } from "./types/planet/blog/tx";
 import { MsgCreateSentPost } from "./types/planet/blog/tx";
+import { MsgUpdateSentPost } from "./types/planet/blog/tx";
 import { MsgDeleteSentPost } from "./types/planet/blog/tx";
+import { MsgSendIbcPost } from "./types/planet/blog/tx";
 
 
-export { MsgSendIbcPost, MsgUpdateSentPost, MsgCreateSentPost, MsgDeleteSentPost };
+export { MsgCreateSentPost, MsgUpdateSentPost, MsgDeleteSentPost, MsgSendIbcPost };
 
-type sendMsgSendIbcPostParams = {
-  value: MsgSendIbcPost,
+type sendMsgCreateSentPostParams = {
+  value: MsgCreateSentPost,
   fee?: StdFee,
   memo?: string
 };
@@ -27,33 +27,33 @@ type sendMsgUpdateSentPostParams = {
   memo?: string
 };
 
-type sendMsgCreateSentPostParams = {
-  value: MsgCreateSentPost,
-  fee?: StdFee,
-  memo?: string
-};
-
 type sendMsgDeleteSentPostParams = {
   value: MsgDeleteSentPost,
   fee?: StdFee,
   memo?: string
 };
 
-
-type msgSendIbcPostParams = {
+type sendMsgSendIbcPostParams = {
   value: MsgSendIbcPost,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgCreateSentPostParams = {
+  value: MsgCreateSentPost,
 };
 
 type msgUpdateSentPostParams = {
   value: MsgUpdateSentPost,
 };
 
-type msgCreateSentPostParams = {
-  value: MsgCreateSentPost,
-};
-
 type msgDeleteSentPostParams = {
   value: MsgDeleteSentPost,
+};
+
+type msgSendIbcPostParams = {
+  value: MsgSendIbcPost,
 };
 
 
@@ -74,17 +74,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgSendIbcPost({ value, fee, memo }: sendMsgSendIbcPostParams): Promise<DeliverTxResponse> {
+		async sendMsgCreateSentPost({ value, fee, memo }: sendMsgCreateSentPostParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgSendIbcPost: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCreateSentPost: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgSendIbcPost({ value: MsgSendIbcPost.fromPartial(value) })
+				let msg = this.msgCreateSentPost({ value: MsgCreateSentPost.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgSendIbcPost: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCreateSentPost: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -102,20 +102,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCreateSentPost({ value, fee, memo }: sendMsgCreateSentPostParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateSentPost: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateSentPost({ value: MsgCreateSentPost.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateSentPost: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgDeleteSentPost({ value, fee, memo }: sendMsgDeleteSentPostParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgDeleteSentPost: Unable to sign Tx. Signer is not present.')
@@ -130,12 +116,26 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgSendIbcPost({ value }: msgSendIbcPostParams): EncodeObject {
-			try {
-				return { typeUrl: "/planet.blog.MsgSendIbcPost", value: MsgSendIbcPost.fromPartial( value ) }  
+		async sendMsgSendIbcPost({ value, fee, memo }: sendMsgSendIbcPostParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgSendIbcPost: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgSendIbcPost({ value: MsgSendIbcPost.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgSendIbcPost: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgSendIbcPost: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgCreateSentPost({ value }: msgCreateSentPostParams): EncodeObject {
+			try {
+				return { typeUrl: "/planet.blog.MsgCreateSentPost", value: MsgCreateSentPost.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateSentPost: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -147,19 +147,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateSentPost({ value }: msgCreateSentPostParams): EncodeObject {
-			try {
-				return { typeUrl: "/planet.blog.MsgCreateSentPost", value: MsgCreateSentPost.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateSentPost: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgDeleteSentPost({ value }: msgDeleteSentPostParams): EncodeObject {
 			try {
 				return { typeUrl: "/planet.blog.MsgDeleteSentPost", value: MsgDeleteSentPost.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgDeleteSentPost: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgSendIbcPost({ value }: msgSendIbcPostParams): EncodeObject {
+			try {
+				return { typeUrl: "/planet.blog.MsgSendIbcPost", value: MsgSendIbcPost.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgSendIbcPost: Could not create message: ' + e.message)
 			}
 		},
 		
