@@ -48,6 +48,19 @@ export interface MsgSendIbcPost {
 export interface MsgSendIbcPostResponse {
 }
 
+export interface MsgSendUpdatePost {
+  creator: string;
+  port: string;
+  channelID: string;
+  timeoutTimestamp: number;
+  postID: string;
+  title: string;
+  content: string;
+}
+
+export interface MsgSendUpdatePostResponse {
+}
+
 function createBaseMsgCreateSentPost(): MsgCreateSentPost {
   return { creator: "", postID: "", title: "", chain: "", creatorNoMessage: "" };
 }
@@ -543,13 +556,156 @@ export const MsgSendIbcPostResponse = {
   },
 };
 
+function createBaseMsgSendUpdatePost(): MsgSendUpdatePost {
+  return { creator: "", port: "", channelID: "", timeoutTimestamp: 0, postID: "", title: "", content: "" };
+}
+
+export const MsgSendUpdatePost = {
+  encode(message: MsgSendUpdatePost, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.port !== "") {
+      writer.uint32(18).string(message.port);
+    }
+    if (message.channelID !== "") {
+      writer.uint32(26).string(message.channelID);
+    }
+    if (message.timeoutTimestamp !== 0) {
+      writer.uint32(32).uint64(message.timeoutTimestamp);
+    }
+    if (message.postID !== "") {
+      writer.uint32(42).string(message.postID);
+    }
+    if (message.title !== "") {
+      writer.uint32(50).string(message.title);
+    }
+    if (message.content !== "") {
+      writer.uint32(58).string(message.content);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSendUpdatePost {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSendUpdatePost();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.port = reader.string();
+          break;
+        case 3:
+          message.channelID = reader.string();
+          break;
+        case 4:
+          message.timeoutTimestamp = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.postID = reader.string();
+          break;
+        case 6:
+          message.title = reader.string();
+          break;
+        case 7:
+          message.content = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSendUpdatePost {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      port: isSet(object.port) ? String(object.port) : "",
+      channelID: isSet(object.channelID) ? String(object.channelID) : "",
+      timeoutTimestamp: isSet(object.timeoutTimestamp) ? Number(object.timeoutTimestamp) : 0,
+      postID: isSet(object.postID) ? String(object.postID) : "",
+      title: isSet(object.title) ? String(object.title) : "",
+      content: isSet(object.content) ? String(object.content) : "",
+    };
+  },
+
+  toJSON(message: MsgSendUpdatePost): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.port !== undefined && (obj.port = message.port);
+    message.channelID !== undefined && (obj.channelID = message.channelID);
+    message.timeoutTimestamp !== undefined && (obj.timeoutTimestamp = Math.round(message.timeoutTimestamp));
+    message.postID !== undefined && (obj.postID = message.postID);
+    message.title !== undefined && (obj.title = message.title);
+    message.content !== undefined && (obj.content = message.content);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgSendUpdatePost>, I>>(object: I): MsgSendUpdatePost {
+    const message = createBaseMsgSendUpdatePost();
+    message.creator = object.creator ?? "";
+    message.port = object.port ?? "";
+    message.channelID = object.channelID ?? "";
+    message.timeoutTimestamp = object.timeoutTimestamp ?? 0;
+    message.postID = object.postID ?? "";
+    message.title = object.title ?? "";
+    message.content = object.content ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgSendUpdatePostResponse(): MsgSendUpdatePostResponse {
+  return {};
+}
+
+export const MsgSendUpdatePostResponse = {
+  encode(_: MsgSendUpdatePostResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgSendUpdatePostResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgSendUpdatePostResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgSendUpdatePostResponse {
+    return {};
+  },
+
+  toJSON(_: MsgSendUpdatePostResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgSendUpdatePostResponse>, I>>(_: I): MsgSendUpdatePostResponse {
+    const message = createBaseMsgSendUpdatePostResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateSentPost(request: MsgCreateSentPost): Promise<MsgCreateSentPostResponse>;
   UpdateSentPost(request: MsgUpdateSentPost): Promise<MsgUpdateSentPostResponse>;
   DeleteSentPost(request: MsgDeleteSentPost): Promise<MsgDeleteSentPostResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   SendIbcPost(request: MsgSendIbcPost): Promise<MsgSendIbcPostResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  SendUpdatePost(request: MsgSendUpdatePost): Promise<MsgSendUpdatePostResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -560,6 +716,7 @@ export class MsgClientImpl implements Msg {
     this.UpdateSentPost = this.UpdateSentPost.bind(this);
     this.DeleteSentPost = this.DeleteSentPost.bind(this);
     this.SendIbcPost = this.SendIbcPost.bind(this);
+    this.SendUpdatePost = this.SendUpdatePost.bind(this);
   }
   CreateSentPost(request: MsgCreateSentPost): Promise<MsgCreateSentPostResponse> {
     const data = MsgCreateSentPost.encode(request).finish();
@@ -583,6 +740,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgSendIbcPost.encode(request).finish();
     const promise = this.rpc.request("planet.blog.Msg", "SendIbcPost", data);
     return promise.then((data) => MsgSendIbcPostResponse.decode(new _m0.Reader(data)));
+  }
+
+  SendUpdatePost(request: MsgSendUpdatePost): Promise<MsgSendUpdatePostResponse> {
+    const data = MsgSendUpdatePost.encode(request).finish();
+    const promise = this.rpc.request("planet.blog.Msg", "SendUpdatePost", data);
+    return promise.then((data) => MsgSendUpdatePostResponse.decode(new _m0.Reader(data)));
   }
 }
 

@@ -4,13 +4,15 @@ import { BlogPacketData } from "planet-client-ts/planet.blog/types"
 import { NoData } from "planet-client-ts/planet.blog/types"
 import { IbcPostPacketData } from "planet-client-ts/planet.blog/types"
 import { IbcPostPacketAck } from "planet-client-ts/planet.blog/types"
+import { UpdatePostPacketData } from "planet-client-ts/planet.blog/types"
+import { UpdatePostPacketAck } from "planet-client-ts/planet.blog/types"
 import { Params } from "planet-client-ts/planet.blog/types"
 import { Post } from "planet-client-ts/planet.blog/types"
 import { SentPost } from "planet-client-ts/planet.blog/types"
 import { TimedoutPost } from "planet-client-ts/planet.blog/types"
 
 
-export { BlogPacketData, NoData, IbcPostPacketData, IbcPostPacketAck, Params, Post, SentPost, TimedoutPost };
+export { BlogPacketData, NoData, IbcPostPacketData, IbcPostPacketAck, UpdatePostPacketData, UpdatePostPacketAck, Params, Post, SentPost, TimedoutPost };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -54,6 +56,8 @@ const getDefaultState = () => {
 						NoData: getStructure(NoData.fromPartial({})),
 						IbcPostPacketData: getStructure(IbcPostPacketData.fromPartial({})),
 						IbcPostPacketAck: getStructure(IbcPostPacketAck.fromPartial({})),
+						UpdatePostPacketData: getStructure(UpdatePostPacketData.fromPartial({})),
+						UpdatePostPacketAck: getStructure(UpdatePostPacketAck.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						Post: getStructure(Post.fromPartial({})),
 						SentPost: getStructure(SentPost.fromPartial({})),
@@ -328,6 +332,32 @@ export default {
 		},
 		
 		
+		async sendMsgUpdateSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.PlanetBlog.tx.sendMsgUpdateSentPost({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateSentPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateSentPost:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgSendUpdatePost({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.PlanetBlog.tx.sendMsgSendUpdatePost({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendUpdatePost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSendUpdatePost:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgCreateSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -354,19 +384,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgUpdateSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.PlanetBlog.tx.sendMsgUpdateSentPost({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateSentPost:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateSentPost:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgDeleteSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -381,6 +398,32 @@ export default {
 			}
 		},
 		
+		async MsgUpdateSentPost({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.PlanetBlog.tx.msgUpdateSentPost({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateSentPost:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateSentPost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSendUpdatePost({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.PlanetBlog.tx.msgSendUpdatePost({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSendUpdatePost:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSendUpdatePost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		async MsgCreateSentPost({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -404,19 +447,6 @@ export default {
 					throw new Error('TxClient:MsgSendIbcPost:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgSendIbcPost:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateSentPost({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.PlanetBlog.tx.msgUpdateSentPost({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateSentPost:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateSentPost:Create Could not create message: ' + e.message)
 				}
 			}
 		},

@@ -34,3 +34,7 @@ ignite relayer connect
 
 # 在源链earth上：
 ./cmd/planetd/planetd q blog list-sent-post
+
+
+
+

@@ -74820,6 +74820,8 @@ definitions:
     type: object
   planet.blog.MsgSendIbcPostResponse:
     type: object
+  planet.blog.MsgSendUpdatePostResponse:
+    type: object
   planet.blog.MsgUpdateSentPostResponse:
     type: object
   planet.blog.Params:

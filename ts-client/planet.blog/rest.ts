@@ -18,6 +18,8 @@ export type BlogMsgDeleteSentPostResponse = object;
 
 export type BlogMsgSendIbcPostResponse = object;
 
+export type BlogMsgSendUpdatePostResponse = object;
+
 export type BlogMsgUpdateSentPostResponse = object;
 
 /**
